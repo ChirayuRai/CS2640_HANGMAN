@@ -37,9 +37,11 @@ game_loop:
 	j exit
 	
 print:
-
 	
 prompt_Input:
+    li $v0, 8 # read in user input
+    # check the input
+    
 
 check_Correct:
 
