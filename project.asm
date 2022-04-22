@@ -15,6 +15,8 @@
 	lifecount2: .asciiz " lives left...\n"
 	promptguess: .asciiz "Enter a character to guess in the string!\n"
 	underscore: .byte 0x5F
+    enter_correct_char: .asciiz "\nPlease only enter lower case letters a-z\n"
+    newLine: "\n"
 	
 .text
 main:
@@ -35,8 +37,6 @@ game_loop:
 	j exit
 	
 print:
-<<<<<<< HEAD
-=======
 	la $a0, lifecount
 	li $v0, 4
 	syscall
@@ -76,11 +76,20 @@ extprint:
 	la $s0, game_word
 	la $s1, check_arr
 	jr $ra
->>>>>>> 4bc57276c6cd88fa8ee3add6b875aa1ac6ce7455
 	
 prompt_Input:
-    li $v0, 8 # read in user input
-    # check the input
+    li $v0, 12 # read in user input
+    syscall
+    move $t0, $v0
+    blt $t0, 0x61, incorrect_input
+    bgt $t0, 0x7a, incorrect_input
+    jr $ra
+
+incorrect_input:
+    la $a0, enter_correct_char
+    li $v0, 4
+    syscall
+    j prompt_Input
     
 
 check_Correct:
