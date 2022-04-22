@@ -1,3 +1,11 @@
+# CS 2640 Hangman Final Project
+# Registers used:
+# t0 - input
+# t1 - general purpose iterator 
+# t2 - Size of word (globally 5 for now)
+# t3 - lives left (6 - one for each appendage) 
+
+
 .data
 	game_word: .asciiz "rosey"
 	incorrect: .byte 
@@ -16,8 +24,8 @@ main:
 	
 	la $t3, life
 	lw $t3, ($t3)
-game_loop:
 
+game_loop:
 	jal print
 	
 	jal prompt_Input
