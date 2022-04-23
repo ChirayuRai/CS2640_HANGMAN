@@ -1,0 +1,34 @@
+# printing text in a file
+.data
+	# file path is unique
+	file: .asciiz "C:\\Users\\17142\\Downloads\\strings.txt"
+	buffer: .space 128
+.text
+main:
+	# opening file
+	li $v0, 13
+	la $a0, file
+	li $a1, 0
+	li $a2, 0
+	syscall
+	move $s0, $v0
+	
+	# reading from file we opened
+	li $v0, 14
+	move $a0, $s0
+	la $a1, buffer
+	
+	li $a2, 12	# hard coded buffer for "hello world"
+	# buffer = characters 
+	# new line counts as 2 characters
+	# 7th char is new line
+	syscall
+	
+	# printing file content
+	li $v0, 4
+	la $a0, buffer
+	syscall
+	
+exit: 
+	li $v0, 10
+	syscall
