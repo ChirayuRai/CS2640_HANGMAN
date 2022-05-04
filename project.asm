@@ -13,7 +13,7 @@
 	life: .word 6
 	lifecount: .asciiz "You have "
 	lifecount2: .asciiz " lives left...\n"
-	promptguess: .asciiz "Enter a character to guess in the string!\n"
+	promptguess: .asciiz "\nEnter a character to guess in the string!\n"
 	underscore: .byte 0x5F
     enter_correct_char: .asciiz "\nPlease only enter lower case letters a-z\n"
     newLine: "\n"
@@ -78,6 +78,9 @@ extprint:
 	jr $ra
 	
 prompt_Input:
+    la $a0, promptguess
+    li $v0, 4
+    syscall
     li $v0, 12 # read in user input
     syscall
     move $t0, $v0
