@@ -91,6 +91,9 @@ extprint:
 #------------------------------------------------------------------------------------------------
 	
 prompt_Input:
+	la $a0, promptguess
+	li $v0, 4
+	syscall
 	#read the user input
 	li $v0, 12 
 	syscall
