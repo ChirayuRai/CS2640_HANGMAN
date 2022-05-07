@@ -1,20 +1,20 @@
 # CS 2640 Hangman Final Project
 # Registers used:
-# t0 - input
+# t0 - pointer at start of the letterBank
+# t4 - boolean used to determine if a guess was in the word.
+# t5 - value of user input
 # s0 - used to hold game word
 # s1 - used to hold array for printing
 # s2 - used to check lose condition
 # s3 - handler for hangman display
 # s4 - used to determine if they lost
 # s5 - holds constant 1 because we frequently compare using it
-# s6 - holds the end of the incorrect array for dynamic appending
-# t4 - boolean used to determine if a guess was in the word.
-
+# s6 - holds the end of the letterBank array for dynamic appending
 
 
 .data
 	game_word: .asciiz "gaming"
-	incorrect: .space 26
+	letterBank: .space 26
 	check_arr: .space 15
 	correct_byte: .byte 2
 	life: .word 6
@@ -26,7 +26,7 @@
     	newLine: .asciiz "\n"
     	space: .asciiz " "
     	letterbank: .asciiz "Letters Guessed: "	
-    	hang1: .asciiz "  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========\n"
+   	 	hang1: .asciiz "  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========\n"
     	hang2: .asciiz "  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========\n"
     	hang3: .asciiz "  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========\n"
     	hang4: .asciiz "  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========\n"
@@ -34,7 +34,8 @@
     	hang6: .asciiz "  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========\n"
     	hang7: .asciiz "  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n=========\n"
     	display_array: .word hang1, hang2, hang3, hang4, hang5, hang6, hang7
-
+		repeat_message: .asciiz "\nYou have already entered this character. Please try entering a new one instead!\n"
+	
 .text
 main:
 	#loads game word, loads the parallel boolean array, and loads life init
@@ -54,7 +55,7 @@ main:
 	#1 is a constant we will check frequentl
 	li $s5, 1
 	
-	la $s6, incorrect
+	la $s6, letterBank
 
 	jal createBoolArray
 	
@@ -155,7 +156,7 @@ wordBankDisplay:
 	li $v0, 4
 	syscall
 	
-	la $t0, incorrect
+	la $t0, letterBank
 wordBankLoop:
 	# load the next byte, if its not null terminated, enter loop
 	lb $t6, ($t0)
@@ -228,23 +229,47 @@ prompt_Input:
 	#read the user input
 	li $v0, 12 
 	syscall
-	move $t0, $v0
+	move $t5, $v0
 	
 	#if the user input is not within ascii bounds of a lower case alpha character, jump to incorrect input
-	blt $t0, 0x61, incorrect_input
-	bgt $t0, 0x7a, incorrect_input
-	#if they input correctly, return their input\
+	blt $t5, 0x61, incorrect_input
+	bgt $t5, 0x7a, incorrect_input
+	
+	# If their input is within the word bank, tell them to try again
+	la $t0, letterBank
+	check_repeat:
+		# Start iterating through the array
+		lb $t7, ($t0)
+		
+		# If at end of letterBank, then continue game
+		beqz $t7, continue
+		
+		# If current index of letterBank is equal to user input, then tell yell at them
+		beq $t7, $t5, print_repeat_message
+		
+		# Iterate letterBank array, loop
+		addi $t0, $t0, 1
+		j check_repeat
+	
+	continue:
+	#if they input correctly, return their input
 	la $a0, newLine
 	li $v0, 4
 	syscall
 	#add it to the letterbank
-	sb $t0, ($s6)
+	sb $t5, ($s6)
 	addi $s6, $s6, 1
 	jr $ra
 
 incorrect_input:
 	#display an error message, and tell them to input correctly.
 	la $a0, enter_correct_char
+	li $v0, 4
+	syscall
+	j prompt_Input
+	
+print_repeat_message:
+	la $a0, repeat_message
 	li $v0, 4
 	syscall
 	j prompt_Input
@@ -256,7 +281,7 @@ check_Correct:
 	#if its the end of the word, leave
 	beqz $t6, exitCheckCorrect
 	#if the current byte matches user input, update parallel array
-	beq $t6, $t0, updateArr
+	beq $t6, $t5, updateArr
 	addi $s0, $s0, 1
 	addi $s1, $s1, 1
 	j check_Correct
