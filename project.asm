@@ -238,9 +238,16 @@ prompt_Input:
 	# If their input is within the word bank, tell them to try again
 	la $t0, letterBank
 	check_repeat:
+		# Start iterating through the array
 		lb $t7, ($t0)
+		
+		# If at end of letterBank, then continue game
 		beqz $t7, continue
+		
+		# If current index of letterBank is equal to user input, then tell yell at them
 		beq $t7, $t5, print_repeat_message
+		
+		# Iterate letterBank array, loop
 		addi $t0, $t0, 1
 		j check_repeat
 	
