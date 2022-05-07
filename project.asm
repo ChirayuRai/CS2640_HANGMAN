@@ -1,36 +1,6 @@
 # CS 2640 Hangman Final Project
 # Registers used:
 # t0 - input
-<<<<<<< HEAD
-# t1 - general purpose iterator 
-# s0 - used to hold game word
-# s1 - used to hold array for printing
-# s2 - used to check lose condition
-# s3 - lives left (6 - one for each appendage) 
-# t4 - boolean used to determine if lives are lost
-# s2 - used to determine if they lost
-
-
-.data
-	game_word: .asciiz "beginner"
-	incorrect: .byte 
-	check_arr: .byte 0,0,0,0,0,0,0,0
-	correct_byte: .byte 2
-	life: .word 6
-<<<<<<< HEAD
-<<<<<<< HEAD
-	lifecount: .asciiz "You have "
-	lifecount2: .asciiz " lives left...\n"
-	promptguess: .asciiz "\nEnter a character to guess in the string!\n"
-=======
-	promptguess: .asciiz "Enter a character to guess in the string!\n"
-	winOutput: .asciiz "Congratulations! You guessed the word: "
-	loseOutput: .asciiz "You failed to guess the word: "
->>>>>>> 91ff5282d533c354b80db3203f763554f6f45a39
-	underscore: .byte 0x5F
-    	enter_correct_char: .asciiz "\nPlease only enter lower case letters a-z\n"
-    	newLine: "\n"
-=======
 # s0 - used to hold game word
 # s1 - used to hold array for printing
 # s2 - used to check lose condition
@@ -56,15 +26,6 @@
     	newLine: .asciiz "\n"
     	space: .asciiz " "
     	letterbank: .asciiz "Letters Guessed: "	
->>>>>>> 7b33bcca69dcfdf6624a7b462a279d44ca7c3adf
-=======
-	promptguess: .asciiz "Enter a character to guess in the string!\n"
-	winOutput: .asciiz "Congratulations! You guessed the word: "
-	loseOutput: .asciiz "You failed to guess the word: "
-	underscore: .byte 0x5F
-    	enter_correct_char: .asciiz "\nPlease only enter lower case letters a-z\n"
-    	newLine: "\n"
->>>>>>> master
     	hang1: .asciiz "  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========\n"
     	hang2: .asciiz "  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========\n"
     	hang3: .asciiz "  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========\n"
@@ -92,27 +53,15 @@ main:
 	
 	#1 is a constant we will check frequentl
 	li $s5, 1
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
 	
 	la $s6, incorrect
 
 	jal createBoolArray
 	
->>>>>>> 7b33bcca69dcfdf6624a7b462a279d44ca7c3adf
 	game_loop:
 
 		jal print
 	
-=======
-
-	game_loop:
-
-		jal print
-	
->>>>>>> master
 		lw $t6, ($s3)
 		jal check_WinCon
 		beq $s4, $zero, exit_game_loop
@@ -121,11 +70,6 @@ main:
 		jal prompt_Input
 	
 		jal check_Correct
-<<<<<<< HEAD
-<<<<<<< HEAD
-	
-		j game_loop
-=======
 	
 		j game_loop
 #------------------------------------------------------------------------------------------------
@@ -146,73 +90,10 @@ exitBoolArr:
 	la $s1, check_arr
 	jr $ra
 #------------------------------------------------------------------------------------------------
->>>>>>> 7b33bcca69dcfdf6624a7b462a279d44ca7c3adf
-=======
-	
-		j game_loop
->>>>>>> master
 exit_game_loop:
 	bne $s4, $zero, didNotWin # Skip over the win output if they did not win
 	#output the win condition
 	la $a0, winOutput
-<<<<<<< HEAD
-<<<<<<< HEAD
-	li $v0, 4
-	syscall
-	#output the word
-	la $a0, game_word
-	li $v0, 4
-	syscall
-	didNotWin: # Jumps over win condition
-	bne $s4, $s5, didNotLose # Skip over the lose output if they did not lose
-	#output the lose condition
-	la $a0, loseOutput
-	li $v0, 4
-	syscall
-	#output the word
-	la $a0, game_word
-	li $v0, 4
-	syscall
-	didNotLose: # Jumps over lose condition
-	j exit  # This will end the code
-
-
-
-check_WinCon:
-	#if they are on the last hangman, lose
-	beq $s2, $t6, lost
-	#use the string to loop. Load each byte simultaneously
-	lb $t6, ($s1)
-	lb $t7, ($s0)
-	#if they reach the end of the string and havent exited, they win
-	beqz $t7, won
-	#if any byte of the string is undiscovered (zero), then continue with the game
-	beqz $t6, leave
-	#iterate both arrays
-	addi $s0, $s0, 1
-	addi $s1, $s1, 1
-	j check_WinCon
-leave:
-	#reset addresses, and continue
-	la $s1, check_arr
-	la $s0, game_word
-	jr $ra
-#0 means won and will exit in main
-won:
-	move $s4, $zero
-	jr $ra
-#1 means lost and will exit in main
-lost:
-	move $s4, $s5
-	jr $ra
-#------------------------------------------------------------------------------------------------
-print:
-	#prints the status of the hangman
-	lw $a0, ($s3)
-	li $v0, 4
-	syscall
-	
-=======
 	li $v0, 4
 	syscall
 	#output the word
@@ -299,64 +180,6 @@ bankdone:
 	la $a0, newLine
 	li $v0, 4
 	syscall
->>>>>>> 7b33bcca69dcfdf6624a7b462a279d44ca7c3adf
-=======
-	li $v0, 4
-	syscall
-	#output the word
-	la $a0, game_word
-	li $v0, 4
-	syscall
-	didNotWin: # Jumps over win condition
-	bne $s4, $s5, didNotLose # Skip over the lose output if they did not lose
-	#output the lose condition
-	la $a0, loseOutput
-	li $v0, 4
-	syscall
-	#output the word
-	la $a0, game_word
-	li $v0, 4
-	syscall
-	didNotLose: # Jumps over lose condition
-	j exit  # This will end the code
-
-
-
-check_WinCon:
-	#if they are on the last hangman, lose
-	beq $s2, $t6, lost
-	#use the string to loop. Load each byte simultaneously
-	lb $t6, ($s1)
-	lb $t7, ($s0)
-	#if they reach the end of the string and havent exited, they win
-	beqz $t7, won
-	#if any byte of the string is undiscovered (zero), then continue with the game
-	beqz $t6, leave
-	#iterate both arrays
-	addi $s0, $s0, 1
-	addi $s1, $s1, 1
-	j check_WinCon
-leave:
-	#reset addresses, and continue
-	la $s1, check_arr
-	la $s0, game_word
-	jr $ra
-#0 means won and will exit in main
-won:
-	move $s4, $zero
-	jr $ra
-#1 means lost and will exit in main
-lost:
-	move $s4, $s5
-	jr $ra
-#------------------------------------------------------------------------------------------------
-print:
-	#prints the status of the hangman
-	lw $a0, ($s3)
-	li $v0, 4
-	syscall
-	
->>>>>>> master
 printloop:
 	#loads the next letter of the word, and if its not the end of the string, continue
 	lb $a0, ($s0)
@@ -382,15 +205,9 @@ post_print_else:
 	#iterate both parallel arrays
 	addi $s0, $s0, 1
 	addi $s1, $s1, 1
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 	la $a0, space
 	li $v0, 4
 	syscall
->>>>>>> 7b33bcca69dcfdf6624a7b462a279d44ca7c3adf
-=======
->>>>>>> master
 	j printloop
 	
 extprint:
@@ -404,23 +221,6 @@ extprint:
 #------------------------------------------------------------------------------------------------
 	
 prompt_Input:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    la $a0, promptguess
-    li $v0, 4
-    syscall
-    li $v0, 12 # read in user input
-    syscall
-    move $t0, $v0
-    blt $t0, 0x61, incorrect_input
-    bgt $t0, 0x7a, incorrect_input
-    jr $ra
-=======
-=======
->>>>>>> 7b33bcca69dcfdf6624a7b462a279d44ca7c3adf
-=======
->>>>>>> master
 	#prompt the user input
 	la $a0, promptguess
 	li $v0, 4
@@ -437,19 +237,10 @@ prompt_Input:
 	la $a0, newLine
 	li $v0, 4
 	syscall
-<<<<<<< HEAD
-<<<<<<< HEAD
-	jr $ra
->>>>>>> 91ff5282d533c354b80db3203f763554f6f45a39
-=======
 	#add it to the letterbank
 	sb $t0, ($s6)
 	addi $s6, $s6, 1
 	jr $ra
->>>>>>> 7b33bcca69dcfdf6624a7b462a279d44ca7c3adf
-=======
-	jr $ra
->>>>>>> master
 
 incorrect_input:
 	#display an error message, and tell them to input correctly.
