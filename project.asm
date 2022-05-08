@@ -1,3 +1,4 @@
+#test
 # CS 2640 Hangman Final Project
 # Registers used:
 # t0 - pointer at start of the letterBank
