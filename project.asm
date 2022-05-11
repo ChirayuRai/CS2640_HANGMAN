@@ -1,30 +1,33 @@
 # CS 2640 Hangman Final Project
 # Registers used:
 # t0 - input
+# t1/t2/t3 - temporary register used in the file function
+# t4 - boolean used to determine if a guess was in the word. 1 means it wasnt, 0 means it was
+# t6 - temporary register used to check win/loss condition
+# t7 - used as a general purpose temporary register
 # s0 - used to hold game word
-# s1 - used to hold array for printing
+# s1 - used to hold the boolean array for printing
 # s2 - used to check lose condition
 # s3 - handler for hangman display
-# s4 - used to determine if they lost
+# s4 - used to exit game loop if they lost
 # s5 - holds constant 1 because we frequently compare using it
-# s6 - holds the end of the incorrect array for dynamic appending
+# s6 - holds the end of the letterBank array for dynamic appending
 # s7 - holds starting address of word
-# t4 - boolean used to determine if a guess was in the word.
 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # YOU MUST MANUALLY CHANGE THE FILE PATH IN ORDER FOR IT WORK FULLY
 # ON MAC YOU MUST PASTE THE FULL PATH, AND IT CANNOT BE ON YOUR ACTUAL HARDDRIVE
-# ON WINDOWS IT CAN BE ON YOUR HARDDRIVE, BUT MAKE SURE TO USE THE FULL PATH AND \\ FOR EACH \\
-
+# ON WINDOWS IT CAN BE ON YOUR HARDDRIVE, BUT MAKE SURE TO USE THE FULL PATH AND \ FOR EACH \
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 .data
-	myFile: .asciiz "/Users/chirayur/OneDrive - Cal Poly Pomona/College/All semesters/Spring 2022/CS2640/CS2640_HANGMAN/WordBank.txt"
-	buffer: .space 40607 # bytes in the wordbank file
+	myFile: .asciiz "C:\\Users\\blari\\OneDrive\\Desktop\\MIPS CODE\\WordBank.txt"
+	buffer: .space 20000
 	game_word: .space 15
 	letterBank: .space 26
 	check_arr: .space 15
 	correct_byte: .byte 2
-	life: .word 6
 	promptguess: .asciiz "Enter a character to guess in the string!\n"
 	winOutput: .asciiz "Congratulations! You guessed the word: "
 	loseOutput: .asciiz "You failed to guess the word: "
@@ -42,10 +45,12 @@
     	hang7: .asciiz "  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n=========\n"
     	display_array: .word hang1, hang2, hang3, hang4, hang5, hang6, hang7
     	repeat_message: .asciiz "\nYou have already entered this character. Please try entering a new one instead!\n"
+    	
 
 .text
 main:
-	#loads game word, loads the parallel boolean array, and loads life init
+	#finds game word, loads the parallel boolean array, and loads life init
+	#the word is now contained in s0
 	jal findWord
 	
 	la $s1, check_arr
@@ -325,7 +330,7 @@ findWord:
     # reading from file just opened
     move $a0, $t1
     la   $a1, buffer
-    li   $a2,  80
+    li   $a2,  20000
     li $v0, 14
     syscall
 
@@ -341,12 +346,12 @@ findFile:
     addi $t2, $t2, 1
     j findFile
 getRandomNum:
-    li $a1, 100
+    li $a1, 10000
     li $v0, 42
     syscall
     li $t3, 0
     sb $t3, ($s0)
-    blt $a0, 30, wordCorrect
+    blt $a0, 10, wordCorrect
     addi $t2, $t2, 1
     la $s0, game_word
     j findFile
@@ -358,6 +363,7 @@ wordCorrect:
     move $a0, $t1 
     syscall
     jr $ra
+#------------------------------------------------------------------------------------------------
 exit:
 	li $v0, 10
 	syscall
